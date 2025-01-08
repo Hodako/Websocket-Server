@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js"
   },
-  "author": "Your Name",
+  "author": "Hodako Morishima",
   "license": "MIT",
   "dependencies": {
     "ws": "^8.13.0",
