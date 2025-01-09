@@ -1,15 +1,13 @@
 {
-  "name": "websocket-server",
+  "name": "websocket-chat",
   "version": "1.0.0",
-  "description": "A Node.js WebSocket server with WebRTC signaling.",
+  "description": "A simple chat app with WebSocket and MySQL",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "author": "Hodako Morishima",
-  "license": "MIT",
   "dependencies": {
-    "ws": "^8.13.0",
-    "uuid": "^9.0.0"
+    "mysql": "^2.18.1",
+    "ws": "^8.13.0"
   }
 }
