@@ -1,22 +1,20 @@
 
 const WebSocket = require("ws");
-const mysql = require("mysql");
+const mysql = require('mysql2');
 
-// MySQL connection
-const db = mysql.createConnection({
-  host: "sql.freedb.tech",
-  port: 3306,
-  user: "freedb_azizul",
-  password: "PX*22DY7$mh2mTy",
-  database: "freedb_ko_database",
+const connection = mysql.createConnection({
+  host: 'sql.freedb.tech',
+  user: 'freedb_azizul',
+  password: 'PX*22DY7$mh2mTy',
+  database: 'freedb_ko_database',
 });
 
-db.connect((err) => {
+connection.connect((err) => {
   if (err) {
-    console.error("MySQL connection failed:", err);
-    process.exit(1);
+    console.error('Error connecting to the database:', err);
+    return;
   }
-  console.log("Connected to MySQL database");
+  console.log('Connected to the MySQL database!');
 });
 
 // WebSocket server
