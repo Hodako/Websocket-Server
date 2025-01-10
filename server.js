@@ -1,46 +1,53 @@
 const WebSocket = require('ws');
-const wss = new WebSocket.Server({ port: 8080 });
+const http = require('http');
 
-const clients = new Map();
+const server = http.createServer();
+const wss = new WebSocket.Server({ server });
+
+let clients = {};
 
 wss.on('connection', (ws) => {
     ws.on('message', (message) => {
         const data = JSON.parse(message);
+        
         switch (data.type) {
             case 'login':
-                clients.set(data.username, ws);
+                clients[data.name] = ws;
+                ws.name = data.name;
                 break;
-            case 'message':
-                const receiverWs = clients.get(data.receiver);
-                if (receiverWs) {
-                    receiverWs.send(JSON.stringify({
-                        type: 'message',
-                        sender: data.sender,
-                        message: data.message
+            case 'call':
+                if (clients[data.target]) {
+                    clients[data.target].send(JSON.stringify({
+                        type: 'call',
+                        name: data.name,
+                        offer: data.offer
                     }));
                 }
                 break;
-            case 'offer':
             case 'answer':
-            case 'candidate':
-                const peerWs = clients.get(data.peer);
-                if (peerWs) {
-                    peerWs.send(JSON.stringify(data));
+                if (clients[data.target]) {
+                    clients[data.target].send(JSON.stringify({
+                        type: 'answer',
+                        answer: data.answer
+                    }));
                 }
                 break;
-            default:
+            case 'candidate':
+                if (clients[data.target]) {
+                    clients[data.target].send(JSON.stringify({
+                        type: 'candidate',
+                        candidate: data.candidate
+                    }));
+                }
                 break;
         }
     });
 
     ws.on('close', () => {
-        for (let [username, clientWs] of clients.entries()) {
-            if (clientWs === ws) {
-                clients.delete(username);
-                break;
-            }
-        }
+        delete clients[ws.name];
     });
 });
 
-console.log('WebSocket server is running on ws://localhost:8080');
+server.listen(8080, () => {
+    console.log('WebSocket server is listening on port 8080');
+});
